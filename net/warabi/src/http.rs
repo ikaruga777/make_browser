@@ -41,5 +41,25 @@ impl HttpClient {
         ))
       }
     };
+
+    // ヘッダーをつくる
+    let mut request = String::from("GET /");
+    request.push_str(&path);
+    request.push_str(" HTTP/1.1\r\n");
+    request.push_str("Host: ");
+    request.push_str(&host);
+    request.push('\n');
+    request.push_str("Accept: text/html\n");
+    request.push_str("Connection: close\n");
+    request.push_str("\n");
+
+    let _bytes_written = match stream.write(request.as_bytes()) {
+      Ok(butes) => bytes,
+      Err(_) => {
+        return Err(Error::Network(
+          "Failed to send a request to TCP stream".to_string(),
+        ))
+      }
+    };
   }
 }
