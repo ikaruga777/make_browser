@@ -4,7 +4,7 @@ use alloc::vec::Vec;
 use saba_core::error::Error;
 use saba_core::http::HttpResponse;
 use alloc::format;
-use crate::alloc::string::ToString;
+use crate::http::alloc::string::ToString;
 use noli::net::lookup_host;
 use noli::net::SocketAddr;
 use noli::net::TcpStream;
@@ -26,10 +26,10 @@ impl HttpClient {
       return Err(Error::Network("Failed to fin IP addresses".to_string()));
     }
 
-    let socket_addr: DocketAddr = (ips[0], port).info();
+    let socket_addr: SocketAddr = (ips[0], port).into();
 
     let mut stream = match TcpStream::connect(socket_addr) {
-      OK(stream) => stream.
+      Ok(stream) => stream,
       Err(_) => {
         return Err(Error::Network(
           "Failed to connect to TCP stream".to_string(),
@@ -49,7 +49,7 @@ impl HttpClient {
     request.push_str("\n");
 
     let _bytes_written = match stream.write(request.as_bytes()) {
-      Ok(butes) => bytes,
+      Ok(bytes) => bytes,
       Err(_) => {
         return Err(Error::Network(
           "Failed to send a request to TCP stream".to_string(),
@@ -59,7 +59,7 @@ impl HttpClient {
 
     let mut received = Vec::new();
     loop {
-      let mut bug = [0u8; 4096];
+      let mut buf = [0u8; 4096];
       let bytes_read = match stream.read(&mut buf) {
         Ok(bytes) => bytes,
         Err(_) => {
