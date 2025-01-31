@@ -16,4 +16,5 @@ mod tests {
 }
 
 pub mod url;
+pub mod http;
 pub use url::Url;
