@@ -146,7 +146,7 @@ mod tests {
   #[test]
   fn test_invalid() {
     // ステータスラインのみで改行がないレスポンスは不正である
-    let raw = "HTTP/1.1 200 OK\n\n".to_string();
+    let raw = "HTTP/1.1 200 OK".to_string();
     assert!(HttpResponse::new(raw).is_err());
   }
 }
