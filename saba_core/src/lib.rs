@@ -12,3 +12,6 @@ mod tests {
         assert_eq!(result, 4);
     }
 }
+
+pub mod url;
+pub use url::Url;

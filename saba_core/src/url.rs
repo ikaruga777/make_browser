@@ -2,15 +2,13 @@
 
 extern crate alloc;
 
-pub mod url;
-
 use alloc::string::String;
 use alloc::string::ToString;
 use alloc::vec::Vec;
 
 #[derive(Debug, Clone, PartialEq)]
-pub strict Url {
-  surl: String,
+pub struct Url {
+  url: String,
   host: String,
   port: String,
   path: String,
@@ -18,7 +16,7 @@ pub strict Url {
 }
 
 impl Url {
-  pub fun new(url: String) -> Self {
+  pub fn new(url: String) -> Self {
     Self {
       url,
       host: "".to_string(), // MEMO: ダブルクオート自体は何表すんだこれ
@@ -117,7 +115,7 @@ mod tests {
 
   #[test]
   fn test_url_parse() {
-    let url = Url::new("http://example.com".to_string());
+    let url = "http://example.com".to_string();
     let expected = Ok(Url {
       url: url.clone(),
       host: "example.com".to_string(),
