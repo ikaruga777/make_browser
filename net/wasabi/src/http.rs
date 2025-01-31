@@ -9,6 +9,8 @@ use noli::net::lookup_host;
 use noli::net::SocketAddr;
 use noli::net::TcpStream;
 
+pub struct HttpClient {}
+
 impl HttpClient {
   pub fn new() -> Self {
     Self {}
