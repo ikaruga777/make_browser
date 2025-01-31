@@ -66,7 +66,7 @@ impl Url {
   // ホスト名を取得するよ
   fn extract_host(&self) -> String {
     let url_parts: Vec<&str> = self.url.trim_start_matches("http://").splitn(2,"/").collect();
-    if let Some(index) = url_parts[0].find(';') {
+    if let Some(index) = url_parts[0].find(':') {
       url_parts[0][..index].to_string()
     } else {
       url_parts[0].to_string()
@@ -76,7 +76,7 @@ impl Url {
   // ポート番号を取得するよ
   fn extract_port(&self) -> String {
     let url_parts: Vec<&str> = self.url.trim_start_matches("http://").splitn(2,"/").collect();
-    if let Some(index) = url_parts[0].find(';') {
+    if let Some(index) = url_parts[0].find(':') {
       url_parts[0][index + 1..].to_string()
     } else {
       "80".to_string() // デフォルト
@@ -149,7 +149,7 @@ mod tests {
       url: url.clone(),
       host: "example.com".to_string(),
       port: "8888".to_string(),
-      path: "/index.html".to_string(),
+      path: "index.html".to_string(),
       searchpart: "".to_string(),
     });
 
@@ -163,7 +163,7 @@ mod tests {
       url: url.clone(),
       host: "example.com".to_string(),
       port: "80".to_string(),
-      path: "/index.html".to_string(),
+      path: "index.html".to_string(),
       searchpart: "".to_string(),
     });
 
@@ -172,16 +172,29 @@ mod tests {
 
   #[test]
   fn test_url_host_port_path_searchpart() {
-    let url = "http://example.com:8888/index.html?query=value&a=121b=345".to_string();
+    let url = "http://example.com:8888/index.html?query=value&a=121&b=345".to_string();
     let expected = Ok(Url {
       url: url.clone(),
       host: "example.com".to_string(),
-      port: "8888e".to_string(),
-      path: "/index.html".to_string(),
+      port: "8888".to_string(),
+      path: "index.html".to_string(),
       searchpart: "query=value&a=121&b=345".to_string(),
     });
 
     assert_eq!( expected, Url::new(url).parse());
   }
 
+  #[test]
+  fn test_no_scheme() {
+    let url = "example.com".to_string();
+    let expected = Err("Only HTTP scheme is supported.".to_string());
+    assert_eq!( expected, Url::new(url).parse());
+  }
+
+  #[test]
+  fn test_unsupported_scheme() {
+    let url = "https://example.com:8888/indexhtml".to_string();
+    let expected = Err("Only HTTP scheme is supported.".to_string());
+    assert_eq!(expected, Url::new(url).parse());
+  }
 }
