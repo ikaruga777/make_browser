@@ -7,6 +7,7 @@ pub mod url;
 
 use alloc::format;
 use crate::error::Error;
+use crate::alloc::string::ToString;
 
 #[derive(Debug, Clone)]
 pub struct HttpResponse {
@@ -54,5 +55,15 @@ impl HttpResponse {
       }
       None => (Vec::new(), remaining),
     };
+
+    let statuses: Vec<&str> = status_line.split(' ').collect();
+
+    Ok(Self {
+      version: statuses[0].to_string(),
+      status_code: statuses[1].parse().unwrap_or(404),
+      reason: statuses[2].to_string(),
+      headers,
+      body: body.to_string(),
+    })
   }
 }
