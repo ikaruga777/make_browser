@@ -1,9 +1,3 @@
-#![no_std]
-
-pub mod http;
-
-pub struct HttpClient {}
-
 extern crate alloc;
 use alloc::string::String;
 use alloc::vec::Vec;
