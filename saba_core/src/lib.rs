@@ -1,5 +1,12 @@
 #![no_std]
 
+extern crate alloc;
+
+pub mod error;
+pub mod url;
+pub mod http;
+pub use url::Url;
+
 pub fn add(left: usize, right: usize) -> usize {
     left + right
 }
@@ -14,6 +21,3 @@ mod tests {
         assert_eq!(result, 4);
     }
 }
-
-pub mod url;
-pub use url::Url;
