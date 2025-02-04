@@ -17,6 +17,27 @@ pub enum HtmlToken {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+pub enum State {
+  Data,
+  TagOpen,
+  EndTagOpen,
+  TagName,
+  BeforeAttributeName,
+  AttributeName,
+  AfterAttributeName,
+  BeforeAttributeValue,
+  AttributeValueDoubleQuoted,
+  AttributeValueSingleQuoted,
+  AfterAttributeValueQuoted,
+  SelfClosingStartTag,
+  ScriptData,
+  ScriptDataLessThanSign,
+  ScriptDataEndTagOpen,
+  ScriptDataEndTagName,
+  TemporaryBuffer,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct HtmlTokenizer {
   state: State,
   pos: usize,
