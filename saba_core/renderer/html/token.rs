@@ -59,3 +59,38 @@ impl HtmlTokenizer {
     }
   }
 }
+
+impl Iterator for HtmlTokenizer {
+  type Item = HtmlToken;
+
+  fn next(&mut self) -> Option<Self::Item> {
+    if self.pos >=self.input.len() {
+      return None;
+    }
+
+    loop {
+      let c = self.consume_next_input();
+      match self.state {
+        State::Data => {
+          if c == '<' {
+            self.state = State::TagOpen;
+            continue;
+          }
+
+          if self.is_eof() {
+            return Some(HtmlToken::Eof);
+          }
+
+          return Some(HtmlToken::Char(c));
+        }
+        _ => {}
+      }
+    }
+  }
+
+  fn consume_next_input(&mut self) -> char {
+    let c = self.input[self.pos];
+    self.pos += 1;
+    c
+  }
+}
