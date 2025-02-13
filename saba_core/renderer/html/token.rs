@@ -127,7 +127,18 @@ impl Iterator for HtmlTokenizer {
             return Some(HtmlToken::Eof);
           }
         }
+        State::EndTagOpen => {
+          if self.is_eof() {
+            return Some(HtmlToken::Eof);
+          }
 
+          if c.is_ascii_alphabetic() {
+            self.reconsume = true;
+            self.state = State::TagName;
+            self.create_tag(false);
+            continue;
+          }
+        }
         _ => {}
       }
     }
