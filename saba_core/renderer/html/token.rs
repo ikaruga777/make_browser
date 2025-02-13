@@ -73,6 +73,22 @@ impl HtmlTokenizer {
     }
   }
 
+  fn append_tag_name(&mut self, c: char) {
+    asset!(self.latest_token.is_some());
+
+    if let Some(t) = self.latest_token.as_mut() {
+      match t {
+        HtmlToken::StartTag {
+          ref mut tag,
+          self_closing: _,
+          attributes: _,
+        }
+        | HtmlToken::EndTag { ref mut tag } => tag.push(c),
+        _ => panic!("`latest_token` should be either StartTag or EndTag"),
+      }
+    }
+  }
+
   fn reconsume_input(&mut self) -> char {
     self.reconsume = false;
     self.input[self.pos - 1]
@@ -138,6 +154,33 @@ impl Iterator for HtmlTokenizer {
             self.create_tag(false);
             continue;
           }
+        }
+        State::TagName => {
+          if c == '' {
+            self.state = State::BeforeAttributeName;
+            continue;
+          }
+
+          if c == '/' {
+            self.state = State::SelfClosingStartTag;
+            continue;
+          }
+
+          if c == '>' {
+            self.state = State::Data;
+            return self.take_latest_token();
+          }
+
+          if c.is_ascii_uppercase() {
+            self.append_tag_name(c.to_ascii_lowercase());
+            continue;
+          }
+
+          if self.is_eof() {
+            return Some(HtmlToken::Eof);
+          }
+
+          self.append_tag_name(c);
         }
         _ => {}
       }
